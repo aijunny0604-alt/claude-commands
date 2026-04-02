@@ -11,16 +11,54 @@ cp claude-commands/*.md ~/.claude/commands/
 
 ## 명령 목록
 
+### 테스트 & QA
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/full-test` | ✅ | 4팀 | 대규모 통합 테스트 (로컬+프로덕션 API) |
+| `/ux-flow` | ✅ | 2팀 | 사용자 시나리오 E2E Playwright 검증 |
+
+### 보안
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/security-team` | ✅ | 3팀 | OWASP Top 10 보안 풀 스캔 |
+| `/security-quick` | ✅ | 1인 | 경량 보안 점검 (5분) |
+
+### UI/UX
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/mobile-audit` | ✅ | 4팀 | 모바일 UI/UX 최적화 점검 |
+| `/responsive-check` | ✅ | 3해상도 | 멀티 해상도 반응형 점검 |
+| `/a11y-check` | ✅ | 2팀 | WCAG 2.1 접근성 점검 |
+
+### 성능 & DB
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/perf-audit` | ✅ | 3팀 | Core Web Vitals + 번들 + API 성능 |
+| `/db-health` | ✅ | 2팀 | Prisma 스키마 + 쿼리 최적화 |
+
+### 코드 품질
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/code-health` | ✅ | 3팀 | 중복/복잡도/미사용 코드 기술 부채 관리 |
+
+### 배포 & 버그
+
+| 명령 | PDCA | 에이전트 | 설명 |
+|------|:----:|:--------:|------|
+| `/pre-deploy` | ✅ | 1인 | 배포 전 자동 체크리스트 (빌드+타입+DB) |
+| `/quick-fix` | ✅ | 1인 | 빠른 버그 수정 (원인 추적→수정→검증) |
+
+### 기타
+
 | 명령 | PDCA | 설명 |
 |------|:----:|------|
-| `/full-test` | ✅ | 4개 에이전트 팀 대규모 통합 테스트 (로컬+프로덕션) |
-| `/security-team` | ✅ | 3개 에이전트 팀 OWASP Top 10 보안 점검 |
-| `/security-quick` | ✅ | 1인 경량 보안 점검 (5분) |
-| `/mobile-audit` | ✅ | 4개 에이전트 팀 모바일 UI/UX 최적화 |
-| `/responsive-check` | ✅ | 3개 해상도 반응형 자동 점검 |
-| `/pre-deploy` | ✅ | 배포 전 자동 체크리스트 (빌드+타입+DB) |
-| `/quick-fix` | ✅ | 빠른 버그 수정 (원인 추적→수정→검증) |
 | `/check-pos` | - | POS Calculator 앱 점검 |
+| `/help` | - | 명령 목록 표시 |
 
 ## PDCA 사이클
 
@@ -39,6 +77,11 @@ cp claude-commands/*.md ~/.claude/commands/
 /security-quick            # 빠른 보안 점검
 /mobile-audit              # 모바일 최적화 점검
 /responsive-check          # 반응형 점검
+/a11y-check                # 접근성 점검
+/perf-audit                # 성능 점검
+/db-health                 # DB 건강 점검
+/code-health               # 코드 품질 점검
+/ux-flow                   # UX 시나리오 E2E
 /pre-deploy production     # 배포 전 체크리스트
 /quick-fix 로그인 안됨     # 빠른 버그 수정
 ```
