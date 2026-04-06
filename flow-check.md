@@ -754,3 +754,8 @@ FAIL 발견 시 **영향도 맵을 역방향으로 추적**하여 파급 범위 
 10. **화면-API 일치**: Playwright로 읽은 화면 값 == API 응답 값 교차 검증
 11. **PDCA 자동 반복**: 90점 미만 시 수정 → 재검증 최대 3회
 12. **커버리지 보고**: 체크리스트 실행률 + 통과율 + 플로우 노드 커버리지 반드시 명시
+13. **Playwright 직접 실행 필수 (★ 최우선)**:
+    - 서브에이전트(Agent tool)는 Playwright MCP에 접근 불가
+    - 코드 분석은 에이전트에 위임하되, **UI 브라우저 검증은 반드시 메인 대화에서 직접 Playwright MCP 실행**
+    - 최소: 변경된 페이지 navigate → snapshot → console_messages(error=0) → screenshot
+    - **"코드만 읽고 PASS" 금지** — 화면 로드 + 콘솔 에러 확인 증거 필수
