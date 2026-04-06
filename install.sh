@@ -78,8 +78,36 @@ else
   echo "     -> hooks 파일 없음 (스킵)"
 fi
 
+# 메모리 설치 (공통 피드백 규칙)
+echo "[5/6] 공통 메모리 설치 중..."
+if [ -d "$TMP_DIR/memory" ]; then
+  # 현재 작업 디렉토리 기반 메모리 경로 생성
+  CWD_ENCODED=$(echo "$HOME" | sed 's|/|--|g' | sed 's|^--||' | sed 's| |--|g')
+  MEMORY_TARGET="$HOME/.claude/projects/${CWD_ENCODED}/memory"
+  mkdir -p "$MEMORY_TARGET"
+  mem_count=0
+  for f in "$TMP_DIR/memory"/*.md; do
+    filename=$(basename "$f")
+    # 기존 메모리가 있으면 병합, 없으면 복사
+    if [ ! -f "$MEMORY_TARGET/$filename" ] || [ "$filename" = "feedback_recommend_agents.md" ] || [ "$filename" = "feedback_bkit_report.md" ]; then
+      cp "$f" "$MEMORY_TARGET/$filename"
+      mem_count=$((mem_count + 1))
+    fi
+  done
+  # MEMORY.md 인덱스에 피드백 항목 추가 (중복 방지)
+  if [ -f "$MEMORY_TARGET/MEMORY.md" ]; then
+    grep -q "feedback_recommend_agents" "$MEMORY_TARGET/MEMORY.md" 2>/dev/null || echo "- [에이전트 추천 규칙](feedback_recommend_agents.md) — 매 응답 끝에 상황 맞는 다음 에이전트 명령어 자동 추천" >> "$MEMORY_TARGET/MEMORY.md"
+    grep -q "feedback_bkit_report" "$MEMORY_TARGET/MEMORY.md" 2>/dev/null || echo "- [bkit 리포트 필수](feedback_bkit_report.md) — bkit Feature Usage 리포트 + 추천 명령어 둘 다 매 응답에 포함" >> "$MEMORY_TARGET/MEMORY.md"
+  else
+    cp "$TMP_DIR/memory/MEMORY.md" "$MEMORY_TARGET/MEMORY.md"
+  fi
+  echo "     -> ${mem_count}개 메모리 설치됨 -> $MEMORY_TARGET"
+else
+  echo "     -> 메모리 파일 없음 (스킵)"
+fi
+
 # 정리
-echo "[5/5] 정리 중..."
+echo "[6/6] 정리 중..."
 rm -rf "$TMP_DIR"
 
 echo ""
