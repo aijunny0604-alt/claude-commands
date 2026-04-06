@@ -1,0 +1,55 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '💡 코드 수정 감지! 추천: /change-verify auto | /quick-fix | /doc-sync'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '💡 추천: /pre-deploy production | /doc-sync'",
+            "if": "Bash(git commit*)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '💡 빌드 완료! 추천: /pre-deploy production | /security-quick'",
+            "if": "Bash(npx next build*)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '💡 빌드 완료! 추천: /pre-deploy production | /security-quick'",
+            "if": "Bash(npx vite build*)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '💡 DB 작업 감지! 추천: /db-health'",
+            "if": "Bash(npx prisma*)"
+          }
+        ]
+      }
+    ]
+  }
+}
