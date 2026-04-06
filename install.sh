@@ -1,17 +1,16 @@
 #!/bin/bash
-# Claude Code 커스텀 에이전트 + Hook 설치 스크립트 v2.1
+# Claude Code 커스텀 에이전트 v2.1 + 스킬 설치 스크립트
 
 set -e
 
 REPO="https://github.com/aijunny0604-alt/claude-commands.git"
-COMMANDS_TARGET="$HOME/.claude/commands"
-HOOKS_TARGET="$HOME/.claude/hooks"
-SETTINGS_FILE="$HOME/.claude/settings.json"
+CMD_TARGET="$HOME/.claude/commands"
+SKILL_TARGET="$HOME/.claude/skills"
 TMP_DIR="/tmp/claude-commands-install"
 
 echo "================================================"
 echo "  Claude Code 커스텀 에이전트 v2.1 설치"
-echo "  (에이전트 + Hook + Settings 통합)"
+echo "  + 스킬 통합 패키지"
 echo "================================================"
 echo ""
 
@@ -19,82 +18,45 @@ echo ""
 rm -rf "$TMP_DIR" 2>/dev/null
 
 # 클론
-echo "[1/4] 최신 파일 다운로드 중..."
+echo "[1/4] 최신 에이전트 다운로드 중..."
 git clone --quiet "$REPO" "$TMP_DIR"
 
-# 에이전트 설치
-echo "[2/4] 에이전트(.md) 설치 중..."
-mkdir -p "$COMMANDS_TARGET"
-count=0
+# 커맨드 설치
+echo "[2/4] 커맨드 에이전트 설치 중..."
+mkdir -p "$CMD_TARGET"
+cmd_count=0
 for f in "$TMP_DIR"/*.md; do
   filename=$(basename "$f")
-  cp "$f" "$COMMANDS_TARGET/$filename"
-  count=$((count + 1))
+  cp "$f" "$CMD_TARGET/$filename"
+  cmd_count=$((cmd_count + 1))
 done
-echo "      ${count}개 에이전트 설치 완료"
+echo "     -> ${cmd_count}개 커맨드 설치됨"
 
-# Hook 스크립트 설치
-echo "[3/4] Hook 스크립트 설치 중..."
-mkdir -p "$HOOKS_TARGET"
-hook_count=0
-if [ -d "$TMP_DIR/hooks" ]; then
-  for f in "$TMP_DIR/hooks"/*.sh; do
-    if [ -f "$f" ]; then
-      filename=$(basename "$f")
-      cp "$f" "$HOOKS_TARGET/$filename"
-      chmod +x "$HOOKS_TARGET/$filename"
-      hook_count=$((hook_count + 1))
-    fi
+# 스킬 설치
+echo "[3/4] 스킬 설치 중..."
+skill_count=0
+if [ -d "$TMP_DIR/skills" ]; then
+  for skill_dir in "$TMP_DIR/skills"/*/; do
+    skill_name=$(basename "$skill_dir")
+    mkdir -p "$SKILL_TARGET/$skill_name"
+    cp -r "$skill_dir"* "$SKILL_TARGET/$skill_name/"
+    skill_count=$((skill_count + 1))
+    echo "     -> 스킬: $skill_name"
   done
 fi
-echo "      ${hook_count}개 hook 스크립트 설치 완료"
-
-# settings.json 안내
-echo "[4/4] Settings 구성..."
-if [ -f "$SETTINGS_FILE" ]; then
-  if grep -q "pre-deploy-check.sh" "$SETTINGS_FILE" 2>/dev/null; then
-    echo "      ✅ settings.json에 hook이 이미 등록되어 있습니다"
-  else
-    echo "      ⚠️  settings.json에 hook을 수동으로 추가해야 합니다"
-    echo ""
-    echo "      $HOME/.claude/settings.json 파일의 hooks 섹션에 다음을 추가:"
-    echo ""
-    cat "$TMP_DIR/hooks/settings-hooks-sample.json" 2>/dev/null || cat <<'EOF'
-      "PreToolUse": [
-        {
-          "matcher": "Bash",
-          "hooks": [
-            { "type": "command", "command": "bash ~/.claude/hooks/pre-deploy-check.sh" }
-          ]
-        }
-      ],
-      "PostToolUse": [
-        {
-          "matcher": "Bash",
-          "hooks": [
-            { "type": "command", "command": "bash ~/.claude/hooks/post-deploy-check.sh" }
-          ]
-        }
-      ]
-EOF
-  fi
-else
-  echo "      ⚠️  $SETTINGS_FILE 파일이 없습니다. Claude Code 실행 후 다시 시도하세요."
-fi
+echo "     -> ${skill_count}개 스킬 설치됨"
 
 # 정리
+echo "[4/4] 정리 중..."
 rm -rf "$TMP_DIR"
 
 echo ""
 echo "================================================"
 echo "  설치 완료!"
-echo "  - 에이전트: $COMMANDS_TARGET (${count}개)"
-echo "  - Hook 스크립트: $HOOKS_TARGET (${hook_count}개)"
 echo ""
-echo "  사용법:"
-echo "  - /help            에이전트 목록 확인"
-echo "  - /pre-deploy      배포 전 체크리스트"
-echo "  - /change-verify   변경사항 정밀 검증"
+echo "  커맨드: ${cmd_count}개 -> $CMD_TARGET"
+echo "  스킬:   ${skill_count}개 -> $SKILL_TARGET"
 echo ""
-echo "  Hook (자동): git push 시 [deploy] 태그면 빌드 체크"
+echo "  커맨드: /help 로 목록 확인"
+echo "  스킬:   '앱 기획' 또는 /app-plan 으로 사용"
 echo "================================================"
