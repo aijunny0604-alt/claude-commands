@@ -1,4 +1,4 @@
-# Claude Code 커스텀 에이전트 v2.0
+# Claude Code 커스텀 에이전트 v2.1
 
 Claude Code에서 사용할 �� 있는 **시나리오 매트릭스 + 영향도 맵 + 체크리스트** 기반 PDCA 커스텀 에이전트 모음입니다.
 
@@ -20,6 +20,20 @@ git clone https://github.com/aijunny0604-alt/claude-commands.git /tmp/cc && cp /
 ```bash
 curl -sL https://raw.githubusercontent.com/aijunny0604-alt/claude-commands/master/install.sh | bash
 ```
+
+---
+
+## v2.1 신규 — Codex 대조 검증 게이트
+
+모든 19개 실행 에이전트에 **Codex 대조 검증 게이트** 가 공통 추가되었습니다.
+
+- 사이클 마지막에 클로드 1차 결과 ↔ Codex 2차 의견 합치표 자동 생성
+- Codex CLI가 없으면 자동 스킵 → 클로드 단독 환경에서도 100% 동일 동작
+- 합치 항목은 자동 진행 / 충돌 항목은 `AskUserQuestion` 으로 사용자 결정
+- 1분 타임아웃으로 Codex가 멈춰도 메인 흐름이 막히지 않음
+- 결과는 REPORT 보고서에 "Codex 대조 검증 결과" 섹션으로 1단락 기록
+
+→ 더블체크가 필요한 분석/리뷰/구현/QA 전 작업에서 단일 모델 편향을 완화합니다.
 
 ---
 
